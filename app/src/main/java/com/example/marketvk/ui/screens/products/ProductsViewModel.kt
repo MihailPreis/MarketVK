@@ -1,8 +1,8 @@
 package com.example.marketvk.ui.screens.products
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.example.marketvk.AppKunteynir
 import com.example.marketvk.repository.ProductsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class ProductsViewModel constructor(
-    private val productsRepository: ProductsRepository = AppKunteynir.productsRepository
+    private val productsRepository: ProductsRepository
 ) : ViewModel() {
     private val pageSize = 30
     private val _state = MutableStateFlow(ProductsUiState())
@@ -109,5 +109,13 @@ class ProductsViewModel constructor(
     fun search(query: String) {
         _state.update { it.copy(searchQuery = query, selectedCategory = null) }
         reloadProducts()
+    }
+}
+
+class ProductsViewModelFactory(
+    private val productsRepository: ProductsRepository
+) : ViewModelProvider.NewInstanceFactory() {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        return ProductsViewModel(productsRepository) as T
     }
 }

@@ -24,6 +24,7 @@ fun CategoryComponent(
         color = Color.gen(title, true),
         modifier = Modifier
             .clip(RoundedCornerShape(20.dp))
+            .composed { modifier }
             .background(
                 Color.gen(
                     title,
@@ -32,6 +33,5 @@ fun CategoryComponent(
                 )
             )
             .padding(vertical = 5.dp, horizontal = 10.dp)
-            .composed { modifier }
     )
 }

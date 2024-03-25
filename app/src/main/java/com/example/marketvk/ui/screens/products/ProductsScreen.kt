@@ -28,17 +28,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.marketvk.R
+import com.example.marketvk.ui.Coordinator
 import com.example.marketvk.ui.components.CategoryComponent
 import com.example.marketvk.ui.components.ProductCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductsScreen(
-    vm: ProductsViewModel = viewModel(),
-    onNavigateToDetails: (Long) -> Unit
+    vm: ProductsViewModel,
+    coordinator: Coordinator
 ) {
     val state by vm.state.collectAsState()
     val focusManager = LocalFocusManager.current
@@ -62,7 +64,7 @@ fun ProductsScreen(
                 TextField(
                     value = state.searchQuery,
                     onValueChange = { vm.search(it) },
-                    label = { Text("Search") },
+                    label = { Text(stringResource(R.string.search)) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 8.dp)
@@ -84,7 +86,7 @@ fun ProductsScreen(
             }
 
             items(state.products) {
-                ProductCard(it, onTap = { onNavigateToDetails(it.id) })
+                ProductCard(it, onTap = { coordinator.openDetails(it.id) })
 
                 if (state.products.indexOf(it) == state.products.count() - 10) {
                     vm.loadMoreProducts()

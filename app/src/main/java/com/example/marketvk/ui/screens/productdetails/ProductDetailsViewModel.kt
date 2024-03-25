@@ -3,7 +3,6 @@ package com.example.marketvk.ui.screens.productdetails
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.example.marketvk.AppKunteynir
 import com.example.marketvk.repository.ProductsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,7 +12,7 @@ import kotlinx.coroutines.launch
 
 class ProductDetailsViewModel constructor(
     private val id: Long,
-    private val productsRepository: ProductsRepository = AppKunteynir.productsRepository
+    private val productsRepository: ProductsRepository
 ) : ViewModel() {
     private val _state = MutableStateFlow(ProductDetailsUiState())
     val state: StateFlow<ProductDetailsUiState> = _state.asStateFlow()
@@ -37,9 +36,10 @@ class ProductDetailsViewModel constructor(
 }
 
 class ProductDetailsViewModelFactory(
-    private val id: Long
+    private val id: Long,
+    private val productsRepository: ProductsRepository
 ) : ViewModelProvider.NewInstanceFactory() {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return ProductDetailsViewModel(id) as T
+        return ProductDetailsViewModel(id, productsRepository) as T
     }
 }

@@ -53,11 +53,12 @@ fun ImagesCarousel(
             ) {
                 repeat(images.size) {
                     val color = if (pagerState.currentPage == it) Color.Black else Color.Gray
-                    Box(modifier = Modifier
-                        .padding(2.dp)
-                        .clip(CircleShape)
-                        .size(10.dp)
-                        .background(color)
+                    Box(
+                        modifier = Modifier
+                            .padding(2.dp)
+                            .clip(CircleShape)
+                            .size(10.dp)
+                            .background(color)
                     )
                 }
             }

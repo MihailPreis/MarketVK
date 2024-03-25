@@ -6,16 +6,23 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import com.example.marketvk.ui.screens.productdetails.ProductDetailsScreen
-import com.example.marketvk.ui.screens.products.ProductsScreen
+import com.example.marketvk.network.ProductsService
+import com.example.marketvk.repository.ProductsRepository
+import com.example.marketvk.ui.components.AppComponent
 import com.example.marketvk.ui.theme.MarketVKTheme
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class MainActivity : ComponentActivity() {
+    private val retrofit = Retrofit.Builder()
+        .baseUrl(BuildConfig.BASE_URL)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+    private val productsRepository =
+        ProductsRepository(retrofit.create(ProductsService::class.java))
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -25,29 +32,9 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    AppComponent()
+                    AppComponent(productsRepository)
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun AppComponent() {
-    val navController = rememberNavController()
-
-    NavHost(navController, "products") {
-        composable("products") {
-            ProductsScreen(onNavigateToDetails = { id ->
-                navController.navigate("productDetails/${id}")
-            })
-        }
-
-        composable("productDetails/{id}") {
-            ProductDetailsScreen(
-                it.arguments?.getString("id")?.toLong() ?: 0,
-                onNavigateBack = { navController.popBackStack() }
-            )
         }
     }
 }

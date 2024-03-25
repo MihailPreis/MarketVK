@@ -58,7 +58,9 @@ fun ProductCard(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        Column(modifier = Modifier.padding(horizontal = 8.dp).padding(bottom = 8.dp)) {
+        Column(modifier = Modifier
+            .padding(horizontal = 8.dp)
+            .padding(bottom = 8.dp)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 Arrangement.SpaceBetween

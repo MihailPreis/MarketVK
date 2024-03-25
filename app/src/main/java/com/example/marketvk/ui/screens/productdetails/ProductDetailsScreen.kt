@@ -31,42 +31,34 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.marketvk.R
+import com.example.marketvk.ui.Coordinator
 import com.example.marketvk.ui.components.ImagesCarousel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductDetailsScreen(
-    productId: Long,
-    onNavigateBack: () -> Unit
+    vm: ProductDetailsViewModel, coordinator: Coordinator
 ) {
-    val vm: ProductDetailsViewModel = viewModel(factory = ProductDetailsViewModelFactory(productId))
     val state by vm.state.collectAsState()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
-    Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = {
-            CenterAlignedTopAppBar(
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.primary
-                ),
-                title = { Text("Details") },
-                navigationIcon = {
-                    IconButton(onClick = { onNavigateBack() }) {
-                        Icon(
-                            Icons.Filled.ArrowBack,
-                            contentDescription = null
-                        )
-                    }
-                }
-            )
-        }
-    ) {
+    Scaffold(modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection), topBar = {
+        CenterAlignedTopAppBar(colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            titleContentColor = MaterialTheme.colorScheme.primary
+        ), title = { Text(stringResource(R.string.details)) }, navigationIcon = {
+            IconButton(onClick = { coordinator.back() }) {
+                Icon(
+                    Icons.Filled.ArrowBack, contentDescription = null
+                )
+            }
+        })
+    }) {
         Column(modifier = Modifier.padding(it)) {
             val product = state.product
             if (state.isLoading) {
@@ -79,7 +71,10 @@ fun ProductDetailsScreen(
                 }
             } else if (state.error != null) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text("Error: ${state.error!!.localizedMessage}", color = Color.Red)
+                    Text(
+                        stringResource(R.string.error, state.error!!.localizedMessage ?: ""),
+                        color = Color.Red
+                    )
                 }
             } else if (product != null) {
                 Box(
@@ -103,9 +98,7 @@ fun ProductDetailsScreen(
                     }
 
                     Text(
-                        product.title,
-                        fontSize = 30.sp,
-                        fontWeight = FontWeight.Bold
+                        product.title, fontSize = 30.sp, fontWeight = FontWeight.Bold
                     )
 
                     Text(product.description)
